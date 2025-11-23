@@ -2,29 +2,40 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Besuchszähler</title>
+    <title>Testseite mit Zähler</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            text-align: center;
+            padding-top: 50px;
+        }
+        .box {
+            background: white;
+            padding: 30px;
+            width: 350px;
+            margin: auto;
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.2);
+        }
+    </style>
 </head>
 <body>
 
-<h2>Besucher gesamt:</h2>
-<p id="counter">Lade...</p>
+<div class="box">
+    <h1>Testseite läuft 🎉</h1>
+    <p>Besuchszähler:</p>
+    <p id="counter">Lade...</p>
+</div>
 
 <script>
-// Eigene Namespace/Key anlegen – ändere sie ruhig!
-const namespace = "meinprojekt123";
-const key = "besucher";
-
-// API aufrufen
-fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`)
-    .then(res => res.json())
-    .then(data => {
-        document.getElementById("counter").textContent =
-            data.value + " Aufrufe";
-    })
-    .catch(() => {
-        document.getElementById("counter").textContent =
-            "Fehler beim Laden";
-    });
+    // Zähler aus localStorage
+    let count = localStorage.getItem("page_visits");
+    if (!count) count = 0;
+    count++;
+    localStorage.setItem("page_visits", count);
+    document.getElementById("counter").textContent = 
+        "Du hast diese Seite " + count + " mal besucht.";
 </script>
 
 </body>
