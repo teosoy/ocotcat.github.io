@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Besuchszähler</title>
+</head>
+<body>
+
+<h2>Besucher gesamt:</h2>
+<p id="counter">Lade...</p>
+
+<script>
+// Eigene Namespace/Key anlegen – ändere sie ruhig!
+const namespace = "meinprojekt123";
+const key = "besucher";
+
+// API aufrufen
+fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`)
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("counter").textContent =
+            data.value + " Aufrufe";
+    })
+    .catch(() => {
+        document.getElementById("counter").textContent =
+            "Fehler beim Laden";
+    });
+</script>
+
+</body>
+</html>
