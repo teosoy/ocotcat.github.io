@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Globaler Besucherzähler</title>
+</head>
+<body>
+
+<h2 id="counter">Lade Zähler…</h2>
+
+<script>
+fetch('https://api.countapi.xyz/hit/teosoy.github.io/ocotcat.github.io')
+.then(r => r.json())
+.then(d => {
+    const now = new Date();
+    document.getElementById("counter").innerHTML =
+        "Besuche gesamt: " + d.value +
+        "<br>Letzter Besuch: " + now.toLocaleString("de-DE");
+});
+</script>
+
+</body>
+</html>
