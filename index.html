@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Interaktiver Besucherzähler mit Feuerwerk</title>
+<style>
+  body { 
+    font-family: Arial, sans-serif; 
+    text-align: center; 
+    margin-top: 50px; 
+    background: #f0f0f0; 
+    overflow: hidden;
+    position: relative;
+  }
+  #counter {
+    font-size: 64px; 
+    font-weight: bold; 
+    color: #ff4500;
+    margin: 20px 0;
+    position: relative;
+    z-index: 2;
+  }
+  #icon {
+    font-size: 50px; 
+    animation: bounce 1s infinite alternate;
+    position: relative;
+    z-index: 2;
+  }
+  @keyframes bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-20px); }
+  }
+  .emojiParticle {
+    position: absolute;
+    pointer-events: none;
+    font-size: 24px;
+    opacity: 0;
+    animation: floatUp linear forwards;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Willkommen auf meiner Webseite! <span id="icon">👋</span></h1>
+<p>Besucherzähler:</p>
+<div id="counter">0</div>
+
+<script>
+const namespace = "meine-webseite";
+const key = "besucherzaehler";
+const emojis = ['🎉','✨','🔥','🚀','💥','🌟','🎊','🥳','🌈','🍀'];
+
+// Zahl animiert hochzählen
+function animateCounter(current, target, duration = 1000) {
+    const stepTime = 20;
+    const steps = Math.ceil(duration / stepTime);
+    let stepCount = 0;
+    const increment = (target - current) / steps;
+
+    const interval = setInterval(() => {
+        current += increment;
+        stepCount++;
+        document.getElementById('counter').innerText = Math.floor(current);
+        if (stepCount >= steps) {
+            clearInterval(interval);
+            document.getElementById('counter').innerText = target;
+            triggerMilestoneFireworks(target);
+        }
+    }, stepTime);
+}
+
+// Permanente Emoji-Particles erzeugen
+function spawnEmoji() {
+    const fw = document.createElement('div');
+    fw.className = 'emojiParticle';
+    fw.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    fw.style.left = Math.random() * window.innerWidth + 'px';
+    fw.style.fontSize = (20 + Math.random()*30) + 'px';
+    fw.style.animationDuration = (3 + Math.random()*3) + 's';
+    document.body.appendChild(fw);
+    setTimeout(() => fw.remove(), 6000);
+}
+
+// Feuerwerk bei Meilensteinen
+function triggerMilestoneFireworks(value) {
+    let count = 0;
+    if (value % 1000 === 0) count = 100;
+    else if (value % 500 === 0) count = 50;
+    else if (value % 200 === 0) count = 20;
+    else if (value % 100 === 0) count = 10;
+    else return;
+
+    for (let i = 0; i < count; i++) {
+        const fw = document.createElement('div');
+        fw.className = 'emojiParticle';
+        fw.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        fw.style.left = Math.random() * window.innerWidth + 'px';
+        fw.style.top = window.innerHeight - 50 + 'px';
+        fw.style.fontSize = (20 + Math.random()*40) + 'px';
+        fw.style.animationDuration = (1 + Math.random()*2) + 's';
+        document.body.appendChild(fw);
+        setTimeout(() => fw.remove(), 2000);
+    }
+}
+
+// Zähler abrufen und erhöhen
+async function incrementCounter() {
+    try {
+        const response = await fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`);
+        const data = await response.json();
+        const currentValue = parseInt(document.getElementById('counter').innerText) || 0;
+        animateCounter(currentValue, data.value, 800);
+    } catch (error) {
+        console.error("Fehler beim Laden des Zählers:", error);
+    }
+}
+
+// Alle 300ms neue permanente Emojis
+setInterval(spawnEmoji, 300);
+
+// Zähler starten
+incrementCounter();
+</script>
+
+</body>
+</html>
